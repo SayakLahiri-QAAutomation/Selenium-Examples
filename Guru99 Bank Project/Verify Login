@@ -1,0 +1,87 @@
+package guru99.project.selenium;
+
+import org.testng.annotations.Test;
+import jxl.read.biff.BiffException;
+import org.testng.annotations.BeforeMethod;
+import java.io.IOException;
+import java.util.concurrent.TimeUnit;
+import org.openqa.selenium.Alert;
+import org.openqa.selenium.By;
+import org.openqa.selenium.NoAlertPresentException;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.testng.annotations.AfterMethod;
+
+public class SS1 {
+	
+	static public WebDriver driver = null;
+	
+  @Test
+  public void LoginSection() throws BiffException, IOException {
+	  //Navigating to the given URL
+	  driver.navigate().to(Util.BASE_URL);  
+	  
+	  String[][] testData = Util.getDataFromExcel(Util.FILE_PATH);
+	  String userName,passWord,actualTitle,actualBoxTitle;
+	  
+	  //Testing for all parameters
+	  
+	  for(int i=0 ; i<testData.length-1 ;i++) {
+		  userName = testData[i][0];
+		  passWord = testData[i][1];
+		  
+		  //Inputing username
+		  driver.findElement(By.xpath("//input[@name='uid']")).clear();
+		  driver.findElement(By.xpath("//input[@name='uid']")).sendKeys(userName);
+		  
+		  //Inputting password
+		  driver.findElement(By.xpath("//input[@name='password']")).clear();
+		  driver.findElement(By.xpath("//input[@name='password']")).sendKeys(passWord);
+		  
+		  //Clicking on login button
+		  driver.findElement(By.xpath("//input[@name='btnLogin']")).click();
+		  
+		  try {
+			  Alert alert = driver.switchTo().alert();
+			  actualBoxTitle = alert.getText();
+			  alert.accept();
+			  
+			  if(actualBoxTitle.contains(Util.EXPECT_ERROR)) {
+				  System.out.println("Test case SS[" + i + "]: Passed");
+			  }
+			  else {
+				  System.out.println("Test case SS[" + i + "]: Failed");
+			  }
+		  }
+		  
+		  catch(NoAlertPresentException ex) {
+			  actualTitle = driver.getTitle();
+			  if(actualTitle.contains(Util.EXPECTED_TITLE)) {
+				  System.out.println("Test case SS[" + i + "]: Passed");
+			  }
+			  else {
+				  System.out.println("Test case SS[" + i + "]: Failed");
+			  }
+		  }
+		  
+	  }
+				  
+
+	  
+	 	  
+  }
+  
+  @BeforeMethod
+  public void beforeMethod() {
+	  System.setProperty(Util.WEBDRIVER_NAME,Util.CHROME_PATH);
+	  driver = new ChromeDriver();
+	  driver.manage().window().maximize();
+	  driver.manage().timeouts().implicitlyWait(Util.WAIT_TIME, TimeUnit.SECONDS);
+  }
+
+  @AfterMethod
+  public void afterMethod() {
+	  driver.quit();
+  }
+
+}

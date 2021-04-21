@@ -1,0 +1,66 @@
+package gu99.eCommerce;
+
+import java.io.File;
+import java.util.Date;
+import java.util.List;
+
+public class Util {
+    public static final String BACKENDURL = "http://live.guru99.com/index.php/backendlogin/";
+    public static final String URL = "http://live.guru99.com/index.php/";
+    public static final String USERNAME = "user01";
+    public static final String PASSWORD = "guru99com";
+    public static final String CHROMEDRIVER_PATH = "C:\\Users\\Umang Bhatia\\Documents\\Selenium Drivers\\chrome driver\\chromedriver.exe";
+    public static final String DRIVER = "webdriver.chrome.driver";
+    public static final String PRICE_MIN = "0";
+    public static final String PRICE_MAX = "150";
+    public static final String PRICE_MIN2 = "151";
+    public static final String PRICE_MAX2 = "1000";
+    public static final int IMPLICIT_WAIT = 10;
+    public static final int SLEEP_TIME = 3000;
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+
+	}
+
+
+	
+	/* Check the file from a specific directory with extension */
+	static boolean isFileDownloaded_Ext(String dirPath, String ext){
+		boolean flag=false;
+	    File dir = new File(dirPath);
+	    File[] files = dir.listFiles();
+	    if (files == null || files.length == 0) {
+	        flag = false;
+	    }
+	    
+	    for (int i = 1; i < files.length; i++) {
+	    	if(files[i].getName().contains(ext)) {
+	    		flag=true;
+	    	}
+	    }
+	    return flag;
+	}
+	
+	public static boolean checkAsec(List<Date> dates) {
+		
+		boolean answer = true;
+		for(int i =1; i<dates.size() ; i++) {
+			if(!(dates.get(i-1).before(dates.get(i)))) {
+				answer = false;
+			}
+		}
+		return answer;
+		
+	}
+	
+	public static boolean checkDesc(List<Date> dates) {
+		boolean answer = true;
+		for(int i =1; i<dates.size() ; i++) {
+			if(!(dates.get(i-1).after(dates.get(i)))) {
+				answer = false;
+			}
+		}
+		return answer;
+		
+	}
+}

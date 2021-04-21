@@ -1,0 +1,66 @@
+package guru99.project.selenium;
+
+import org.openqa.selenium.Alert;
+import org.openqa.selenium.By;
+import org.openqa.selenium.NoAlertPresentException;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.testng.Assert;
+import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.DataProvider;
+import org.testng.annotations.Test;
+
+public class TestUsingDataProvider {
+	public static WebDriver driver = null;
+  @Test(dataProvider= "getInputData")
+  public void Test(String username, String password) {
+	  driver.findElement(By.xpath("//input[@name='uid']")).clear();
+	  driver.findElement(By.xpath("//input[@name='uid']")).sendKeys(username);
+	  
+	   		  //Inputting password 
+	   		  driver.findElement(By.xpath("//input[@name='password']")).clear(); 
+	 		  driver.findElement(By.xpath("//input[@name='password']")).sendKeys(password); 
+	   		   
+	   		  //Clicking on login button 
+	   		  driver.findElement(By.xpath("//input[@name='btnLogin']")).click(); 
+	   		   
+	   		  try { 
+	   			  Alert alert = driver.switchTo().alert(); 
+	   			  String actualBoxTitle = alert.getText(); 
+	   			  alert.accept(); 
+	   			  Assert.assertEquals(actualBoxTitle, Util.EXPECT_ERROR);
+	   			  
+	   		  } 
+	   		   
+	  		  catch(NoAlertPresentException ex) { 
+	  			  String actualTitle = driver.getTitle(); 
+	  			  Assert.assertEquals(actualTitle, Util.EXPECTED_TITLE);
+	  			   
+	  		  } 
+  }
+  
+  @BeforeTest
+  public void setup() {
+	  	System.setProperty(Util.WEBDRIVER_NAME,Util.CHROME_PATH);
+		driver = new ChromeDriver();
+		driver.manage().window().maximize();
+		driver.navigate().to(Util.BASE_URL);
+  }
+  @AfterTest
+  public void closeDriver() {
+	  	driver.quit();
+  }
+  
+  @DataProvider(name="getInputData")
+  public Object[][] getcrdentials() {
+	  return new Object[][] {
+		  {Util.USER_NAME,Util.PASSWORD},
+		  {Util.USER_NAME,"Invalid"},
+		  {"Invalid",Util.PASSWORD},
+		  {"Invalid1","Invalid2"}
+	  };
+  }
+  
+  
+}
